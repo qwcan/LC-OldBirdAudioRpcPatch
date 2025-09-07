@@ -5,8 +5,8 @@ namespace Qwcan.patch;
 /// <summary>
 /// Patch to modify the behavior of the ship lights.
 /// </summary>
-[HarmonyPatch(typeof(ShipLights))]
-public class ShipLightsPatch
+[HarmonyPatch(typeof(RadMechAI))]
+public class RadMechPatch
 {
     /// <summary>
     /// Method called when the ship lights are toggled.
@@ -18,7 +18,7 @@ public class ShipLightsPatch
     /// <param name="__instance">Instance that called the method.</param>
     /// <param name="__args">Arguments passed to the method.</param>
     /// <returns>True if the original method should be called, false otherwise.</returns>
-    [HarmonyPatch(nameof(ShipLights.ToggleShipLights))]
+    [HarmonyPatch(nameof(RadMechAI.SetMechAlertedToThreat))]
     [HarmonyPrefix]
     private static bool OnPowerSwitch(ref ShipLights __instance, object[] __args)
     {

@@ -2,7 +2,6 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using Qwcan.patch;
-using Qwcan.service;
 
 namespace Qwcan;
 
@@ -15,7 +14,6 @@ public class Plugin : BaseUnityPlugin
 
     private readonly Harmony _harmony = new(PluginInfo.PLUGIN_GUID);
 
-    public TemplateService Service;
 
     public Plugin()
     {
@@ -24,7 +22,6 @@ public class Plugin : BaseUnityPlugin
 
     private void Awake()
     {
-        Service = new TemplateService();
 
         Log.LogInfo($"Applying patches...");
         ApplyPluginPatch();
@@ -36,6 +33,6 @@ public class Plugin : BaseUnityPlugin
     /// </summary>
     private void ApplyPluginPatch()
     {
-        _harmony.PatchAll(typeof(ShipLightsPatch));
+        _harmony.PatchAll(typeof(RadMechPatch));
     }
 }
