@@ -3,14 +3,14 @@
     <PropertyGroup>
         <!-- Name of the team on Thunderstore -->
         <!-- https://thunderstore.io/settings/teams -->
-        <RootNamespace>YourThunderstoreTeam</RootNamespace>
+        <RootNamespace>qwcan</RootNamespace>
         <!-- The plugin will be built in the bin directory -->
         <OutputPath>bin</OutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <!-- Path of the game directory, should contain Lethal Company.exe -->
         <!-- PROGRA~1 is the short path for Program Files -->
         <!-- PROGRA~2 is the short path for Program Files (x86) -->
-        <GameDir>C:\PROGRA~2\Steam\steamapps\common\Lethal Company\</GameDir>
+        <GameDir>E:\SteamLibrary\steamapps\common\Lethal Company</GameDir>
         <!-- Path of the game's plugin directory where the built plugin will be copied to -->
         <PluginGameDir>$(GameDir)BepInEx\plugins\</PluginGameDir>
         <!-- Path of the game's managed directory where the game's dlls are located -->
@@ -22,7 +22,7 @@
         <!-- Version of the game supported by the plugin -->
         <!-- The value must be the same than the one in CI/CD -->
         <!-- https://www.nuget.org/packages/LethalCompany.GameLibs.Steam -->
-        <GameVersion>49.0.0-alpha.1</GameVersion>
+        <GameVersion>70.0.0-ngd.0</GameVersion>
     </PropertyGroup>
 
     <ItemGroup>

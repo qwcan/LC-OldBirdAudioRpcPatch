@@ -1,9 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using Qwcan.patch;
+using qwcan.patch;
 
-namespace Qwcan;
+namespace qwcan;
 
 [BepInPlugin("OldBirdAudioRpcPatch", "OldBirdAudioRpcPatch", "1.0.0")]
 public class Plugin : BaseUnityPlugin

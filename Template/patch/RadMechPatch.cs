@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Qwcan.patch;
+namespace qwcan.patch;
 
 /// <summary>
 /// Patch to modify the behavior of the ship lights.
