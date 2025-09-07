@@ -1,4 +1,8 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using HarmonyLib;
+using UnityEngine;
 
 namespace qwcan.patch;
 
@@ -9,7 +13,7 @@ namespace qwcan.patch;
 public class RadMechPatch
 {
     /// <summary>
-    /// Method called when the ship lights are toggled.
+    /// Method called when mech is alerted to a threat.
     ///
     /// Check the link below for more information about Harmony patches.
     /// Class patches: https://github.com/BepInEx/HarmonyX/wiki/Class-patches
@@ -20,10 +24,50 @@ public class RadMechPatch
     /// <returns>True if the original method should be called, false otherwise.</returns>
     [HarmonyPatch(nameof(RadMechAI.SetMechAlertedToThreat))]
     [HarmonyPrefix]
-    private static bool OnPowerSwitch(ref ShipLights __instance, object[] __args)
+    private static void OnSetMechAlertedToThreat(ref RadMechAI __instance, object[] __args)
     {
-        Plugin.Log.LogInfo("The lights are now toggled!");
-        // When someone toggles the ship lights, the lights will not be changed.
-        return false;
+        Plugin.Log.LogInfo("Sending ClientRPC");
+        if (!__instance.isAlerted)
+        {
+            __instance.SetMechAlertedClientRpc();
+        }
     }
+    
+    // Insert code to play the sound in SetMechAlertedClientRpc()
+    [HarmonyPatch(nameof(RadMechAI.SetMechAlertedClientRpc))]
+    [HarmonyTranspiler]
+    private static IEnumerable<CodeInstruction> Transpiler(
+        IEnumerable<CodeInstruction> instructions)
+    {
+        Plugin.Log.LogInfo("Patching SetMechAlertedClientRpc");
+        var code = new List<CodeInstruction>(instructions);
+        var alertTimerField = AccessTools.Field(typeof(RadMechAI), "alertTimer");
+        var playMethod = AccessTools.Method(typeof(AudioSource), "Play");
+        
+        
+
+        for (int i = 0; i < code.Count; i++)
+        {
+            var instr = code[i];
+            yield return instr;
+
+            if (instr.StoresField(alertTimerField))
+            {
+                // Inject LocalLRADAudio.Play() right after alertTimer is set
+                // *Should* only be called in the client
+                // Code to insert:
+                /*
+                IL_001b: ldarg.0
+                IL_001c: ldfld class [UnityEngine.AudioModule]UnityEngine.AudioSource RadMechAI::LocalLRADAudio
+                IL_0021: callvirt instance void [UnityEngine.AudioModule]UnityEngine.AudioSource::Play()
+                */
+                
+                Plugin.Log.LogInfo("Found alertTimer ldfld, inserting call to LocalLRADAudio.Play()");
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+                yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(RadMechAI), "LocalLRADAudio") );
+                yield return new CodeInstruction(OpCodes.Callvirt, playMethod);
+            }
+        }
+    }
+
 }
