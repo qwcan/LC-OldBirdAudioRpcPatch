@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 
@@ -42,7 +43,6 @@ public class RadMechPatch
         Plugin.Log.LogInfo("Patching SetMechAlertedClientRpc");
         var code = new List<CodeInstruction>(instructions);
         var alertTimerField = AccessTools.Field(typeof(RadMechAI), "alertTimer");
-        var playMethod = AccessTools.Method(typeof(AudioSource), "Play");
         
         
 
@@ -55,17 +55,27 @@ public class RadMechPatch
             {
                 // Inject LocalLRADAudio.Play() right after alertTimer is set
                 // *Should* only be called in the client
+                
+                //Add a log statement
+                /*
+	            IL_0000: call class [BepInEx]BepInEx.Logging.ManualLogSource qwcan.Plugin::get_Log()
+	            IL_0005: ldstr "Calling LocalLRADAudio.Play()"
+	            IL_000a: callvirt instance void [BepInEx]BepInEx.Logging.ManualLogSource::LogInfo(object)
+                 */
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Plugin), "get_Log"));
+                yield return new CodeInstruction(OpCodes.Ldstr, "Calling LocalLRADAudio.Play()");
+                yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(ManualLogSource), "LogInfo", new[] {typeof(object)}));
+                
                 // Code to insert:
                 /*
                 IL_001b: ldarg.0
                 IL_001c: ldfld class [UnityEngine.AudioModule]UnityEngine.AudioSource RadMechAI::LocalLRADAudio
                 IL_0021: callvirt instance void [UnityEngine.AudioModule]UnityEngine.AudioSource::Play()
                 */
-                
                 Plugin.Log.LogInfo("Found alertTimer ldfld, inserting call to LocalLRADAudio.Play()");
                 yield return new CodeInstruction(OpCodes.Ldarg_0);
                 yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(RadMechAI), "LocalLRADAudio") );
-                yield return new CodeInstruction(OpCodes.Callvirt, playMethod);
+                yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(AudioSource), "Play"));
             }
         }
     }
