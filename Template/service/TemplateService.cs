@@ -1,4 +1,4 @@
-﻿namespace YourThunderstoreTeam.service;
+﻿namespace Qwcan.service;
 
 /// <summary>
 /// Example of service detached from the game.
