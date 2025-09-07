@@ -5,14 +5,14 @@ using Qwcan.patch;
 
 namespace Qwcan;
 
-[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin("OldBirdAudioRpcPatch", "OldBirdAudioRpcPatch", "1.0.0")]
 public class Plugin : BaseUnityPlugin
 {
     public static Plugin Instance { get; set; }
 
     public static ManualLogSource Log => Instance.Logger;
 
-    private readonly Harmony _harmony = new(PluginInfo.PLUGIN_GUID);
+    private readonly Harmony _harmony = new("OldBirdAudioRpcPatch");
 
 
     public Plugin()
